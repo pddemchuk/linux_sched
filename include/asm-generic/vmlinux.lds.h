@@ -128,6 +128,8 @@
 #define SCHED_DATA				\
 	STRUCT_ALIGN();				\
 	__begin_sched_classes = .;		\
+	/* EDITED CODE */
+	*(__custom_sched_class)			\
 	*(__idle_sched_class)			\
 	*(__fair_sched_class)			\
 	*(__rt_sched_class)			\

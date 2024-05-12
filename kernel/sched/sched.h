@@ -176,10 +176,17 @@ static inline int dl_policy(int policy)
 {
 	return policy == SCHED_DEADLINE;
 }
+
+/* EDITED CODE */
+static inline int custom_policy(int policy)
+{
+	return policy == SCHED_CUSTOM;
+}
+
 static inline bool valid_policy(int policy)
 {
 	return idle_policy(policy) || fair_policy(policy) ||
-		rt_policy(policy) || dl_policy(policy);
+		rt_policy(policy) || dl_policy(policy) || custom_policy(policy);
 }
 
 static inline int task_has_idle_policy(struct task_struct *p)
@@ -357,6 +364,8 @@ extern int  dl_bw_check_overflow(int cpu);
 
 struct cfs_rq;
 struct rt_rq;
+/* EDITED CODE */
+struct custom_rq;
 
 extern struct list_head task_groups;
 
@@ -715,6 +724,13 @@ struct dl_rq {
 	u64			bw_ratio;
 };
 
+/* EDITED CODE */
+/* Custom class' related fields in a runqueue */
+struct custom_rq {
+	struct list_head	task_list;
+	unsigned int		nr_running;
+};
+
 #ifdef CONFIG_FAIR_GROUP_SCHED
 /* An entity is a task if it doesn't "own" a runqueue */
 #define entity_is_task(se)	(!se->my_q)
@@ -933,6 +949,8 @@ struct rq {
 	struct cfs_rq		cfs;
 	struct rt_rq		rt;
 	struct dl_rq		dl;
+	/* EDITED CODE */
+	struct custom_rq	custom;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
 	/* list of leaf cfs_rq on this CPU: */
@@ -2285,6 +2303,8 @@ print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
 extern void init_cfs_rq(struct cfs_rq *cfs_rq);
 extern void init_rt_rq(struct rt_rq *rt_rq);
 extern void init_dl_rq(struct dl_rq *dl_rq);
+/* EDITED CODE */
+extern void init_custom_rq(struct custom_rq *custom_rq);
 
 extern void cfs_bandwidth_usage_inc(void);
 extern void cfs_bandwidth_usage_dec(void);

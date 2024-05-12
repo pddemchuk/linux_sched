@@ -585,6 +585,12 @@ struct sched_dl_entity {
 #endif
 };
 
+/* EDITED CODE */
+struct sched_custom_entity() {
+	struct list_head		task_list;
+	unsigned short			on_rq;
+};
+
 #ifdef CONFIG_UCLAMP_TASK
 /* Number of utilization clamp buckets (shorter alias) */
 #define UCLAMP_BUCKETS CONFIG_UCLAMP_BUCKETS_COUNT
@@ -699,6 +705,8 @@ struct task_struct {
 	struct task_group		*sched_task_group;
 #endif
 	struct sched_dl_entity		dl;
+	/* EDITED CODE */
+	struct sched_custom_entity	custom_se;
 
 #ifdef CONFIG_UCLAMP_TASK
 	/*
