@@ -42,6 +42,8 @@ struct bio_list;
 struct blk_plug;
 struct capture_control;
 struct cfs_rq;
+/* EDITED CODE */
+struct custom_rq;
 struct fs_struct;
 struct futex_pi_state;
 struct io_context;
@@ -586,7 +588,7 @@ struct sched_dl_entity {
 };
 
 /* EDITED CODE */
-struct sched_custom_entity() {
+struct sched_custom_entity {
 	struct list_head		task_list;
 	unsigned short			on_rq;
 };

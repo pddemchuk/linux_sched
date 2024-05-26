@@ -3,12 +3,12 @@
 
 void init_custom_rq(struct custom_rq *custom_rq) {
 	custom_rq->nr_running = 0;
-	INIT_LIST_HEAD(custom_rq->task_list);
+	INIT_LIST_HEAD(&custom_rq->task_list);
 }
 
 static void dequeue_task_custom(struct rq *rq, struct task_struct *p, int flags)
 {
-	struct sched_custom_entity *se = *p->custom_se;
+	struct sched_custom_entity *se = &p->custom_se;
 
 	list_del(&se->task_list);
 
@@ -32,10 +32,10 @@ static void enqueue_task_custom(struct rq *rq, struct task_struct *p, int flags)
 	add_nr_running(rq, 1);
 }
 
-static void yield_task_custom(struct rq *rq) 
-{
-	update_curr_custom(rq);
-}
+// static void yield_task_custom(struct rq *rq) 
+// {
+// 	update_curr_custom(rq);
+// }
 
 static struct task_struct *pick_next_task_custom(struct rq *rq)
 {
@@ -48,44 +48,52 @@ static struct task_struct *pick_next_task_custom(struct rq *rq)
 	if (!next_task)
 		return NULL;
 
-	set_next_task_custom(rq, next_task, true);
+	//set_next_task_custom(rq, next_task, true);
+	next_task->se.exec_start = rq_clock_task(rq);
 	return next_task;
 }
 
-static void put_prev_task_custom(struct rq *rq, struct task_struct *p)
-{
-	update_curr_custom(rq);
-}
+// static void put_prev_task_custom(struct rq *rq, struct task_struct *p)
+// {
+// 	update_curr_custom(rq);
+// }
 
-static void set_next_task_custom(struct rq *rq, struct task_struct *p, bool first)
-{
-	p->se.exec_start = rq_clock_task(rq);
-}
+// static inline void set_next_task_custom(struct rq *rq, struct task_struct *p, bool first)
+// {
+// 	p->se.exec_start = rq_clock_task(rq);
+// }
 
-static void task_tick_custom(struct rq *rq, struct task_struct *p, int queued)
-{
-	update_curr_custom(rq);
-}
+// static void task_tick_custom(struct rq *rq, struct task_struct *p, int queued)
+// {
+// 	update_curr_custom(rq);
+// }
 
-static void update_curr_custom(struct rq *rq)
-{
+// static void update_curr_custom(struct rq *rq)
+// {
 
-}
+// }
 
 /*
  * Simple, special scheduling class for the per-CPU custom tasks:
  */
+// const struct sched_class custom_sched_class
+// 	__section("__custom_sched_class") = {
+//     .enqueue_task		= enqueue_task_custom,
+// 	.dequeue_task		= dequeue_task_custom,
+// 	.yield_task			= yield_task_custom,
+
+// 	.pick_next_task		= pick_next_task_custom,
+// 	.put_prev_task		= put_prev_task_custom,
+// 	.set_next_task      = set_next_task_custom,
+
+// 	.task_tick			= task_tick_custom,
+
+// 	.update_curr		= update_curr_custom,
+// };
 const struct sched_class custom_sched_class
 	__section("__custom_sched_class") = {
     .enqueue_task		= enqueue_task_custom,
 	.dequeue_task		= dequeue_task_custom,
-	.yield_task			= yield_task_custom,
 
 	.pick_next_task		= pick_next_task_custom,
-	.put_prev_task		= put_prev_task_custom,
-	.set_next_task      = set_next_task_custom,
-
-	.task_tick			= task_tick_custom,
-
-	.update_curr		= update_curr_custom,
 };
