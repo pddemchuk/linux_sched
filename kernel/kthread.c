@@ -404,7 +404,8 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
 		 * root may have changed our (kthreadd's) priority or CPU mask.
 		 * The kernel thread should not inherit these properties.
 		 */
-		sched_setscheduler_nocheck(task, SCHED_NORMAL, &param);
+		/* EDITED CODE */
+		sched_setscheduler_nocheck(task, SCHED_CUSTOM, &param);
 		set_cpus_allowed_ptr(task,
 				     housekeeping_cpumask(HK_FLAG_KTHREAD));
 	}
@@ -1413,3 +1414,4 @@ struct cgroup_subsys_state *kthread_blkcg(void)
 }
 EXPORT_SYMBOL(kthread_blkcg);
 #endif
+

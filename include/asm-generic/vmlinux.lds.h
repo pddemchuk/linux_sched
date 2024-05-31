@@ -130,8 +130,8 @@
 	STRUCT_ALIGN();				\
 	__begin_sched_classes = .;		\
 	*(__idle_sched_class)			\
-	*(__custom_sched_class)			\
 	*(__fair_sched_class)			\
+	*(__custom_sched_class)			\
 	*(__rt_sched_class)			\
 	*(__dl_sched_class)			\
 	*(__stop_sched_class)			\
@@ -1168,3 +1168,4 @@
 	BSS(bss_align)							\
 	. = ALIGN(stop_align);						\
 	__bss_stop = .;
+

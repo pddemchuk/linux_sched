@@ -7062,9 +7062,11 @@ void __init sched_init(void)
 	unsigned long ptr = 0;
 	int i;
 
+	/* EDITED CODE */
 	/* Make sure the linker didn't screw up */
 	BUG_ON(&idle_sched_class + 1 != &fair_sched_class ||
-	       &fair_sched_class + 1 != &rt_sched_class ||
+		   &fair_sched_class + 1 != &custom_sched_class ||
+	       &custom_sched_class + 1 != &rt_sched_class ||
 	       &rt_sched_class + 1   != &dl_sched_class);
 #ifdef CONFIG_SMP
 	BUG_ON(&dl_sched_class + 1 != &stop_sched_class);
@@ -7140,9 +7142,9 @@ void __init sched_init(void)
 		rq->calc_load_update = jiffies + LOAD_FREQ;
 		init_cfs_rq(&rq->cfs);
 		init_rt_rq(&rq->rt);
-		init_dl_rq(&rq->dl);
 		/* EDITED CODE */
 		init_custom_rq(&rq->custom);
+		init_dl_rq(&rq->dl);
 #ifdef CONFIG_FAIR_GROUP_SCHED
 		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
@@ -8493,3 +8495,4 @@ void call_trace_sched_update_nr_running(struct rq *rq, int count)
 {
         trace_sched_update_nr_running_tp(rq, count);
 }
+

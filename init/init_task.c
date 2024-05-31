@@ -61,6 +61,7 @@ unsigned long init_shadow_call_stack[SCS_SIZE / sizeof(long)]
  * Set up the first task table, touch at your own risk!. Base=0,
  * limit=0x1fffff (=2MB)
  */
+/* EDITED CODE */ 
 struct task_struct init_task
 #ifdef CONFIG_ARCH_TASK_STRUCT_ON_STACK
 	__init_task_data
@@ -78,7 +79,7 @@ struct task_struct init_task
 	.prio		= MAX_PRIO - 20,
 	.static_prio	= MAX_PRIO - 20,
 	.normal_prio	= MAX_PRIO - 20,
-	.policy		= SCHED_NORMAL,
+	.policy		= SCHED_CUSTOM,
 	.cpus_ptr	= &init_task.cpus_mask,
 	.cpus_mask	= CPU_MASK_ALL,
 	.nr_cpus_allowed= NR_CPUS,
@@ -93,6 +94,9 @@ struct task_struct init_task
 	.rt		= {
 		.run_list	= LIST_HEAD_INIT(init_task.rt.run_list),
 		.time_slice	= RR_TIMESLICE,
+	},
+	.custom_se	= {
+		.task_list 	= LIST_HEAD_INIT(init_task.custom_se.task_list),
 	},
 	.tasks		= LIST_HEAD_INIT(init_task.tasks),
 #ifdef CONFIG_SMP
@@ -223,3 +227,4 @@ EXPORT_SYMBOL(init_task);
 #ifndef CONFIG_THREAD_INFO_IN_TASK
 struct thread_info init_thread_info __init_thread_info = INIT_THREAD_INFO(init_task);
 #endif
+
