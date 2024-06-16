@@ -42,7 +42,6 @@ struct bio_list;
 struct blk_plug;
 struct capture_control;
 struct cfs_rq;
-/* EDITED CODE */
 struct custom_rq;
 struct fs_struct;
 struct futex_pi_state;
@@ -587,7 +586,6 @@ struct sched_dl_entity {
 #endif
 };
 
-/* EDITED CODE */
 struct sched_custom_entity {
 	struct list_head		task_list;
 	unsigned short			on_rq;
@@ -707,7 +705,6 @@ struct task_struct {
 	struct task_group		*sched_task_group;
 #endif
 	struct sched_dl_entity		dl;
-	/* EDITED CODE */
 	struct sched_custom_entity	custom_se;
 
 #ifdef CONFIG_UCLAMP_TASK

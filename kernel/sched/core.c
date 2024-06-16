@@ -7062,7 +7062,6 @@ void __init sched_init(void)
 	unsigned long ptr = 0;
 	int i;
 
-	/* EDITED CODE */
 	/* Make sure the linker didn't screw up */
 	BUG_ON(&idle_sched_class + 1 != &fair_sched_class ||
 		   &fair_sched_class + 1 != &custom_sched_class ||
@@ -7142,7 +7141,6 @@ void __init sched_init(void)
 		rq->calc_load_update = jiffies + LOAD_FREQ;
 		init_cfs_rq(&rq->cfs);
 		init_rt_rq(&rq->rt);
-		/* EDITED CODE */
 		init_custom_rq(&rq->custom);
 		init_dl_rq(&rq->dl);
 #ifdef CONFIG_FAIR_GROUP_SCHED

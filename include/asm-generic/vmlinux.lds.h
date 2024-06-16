@@ -125,7 +125,6 @@
  * used to determine the order of the priority of each sched class in
  * relation to each other.
  */
-/* EDITED CODE */
 #define SCHED_DATA				\
 	STRUCT_ALIGN();				\
 	__begin_sched_classes = .;		\

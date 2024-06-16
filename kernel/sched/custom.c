@@ -76,6 +76,103 @@ static void task_tick_custom(struct rq *rq, struct task_struct *p, int queued)
 	update_curr_custom(rq);
 }
 
+#ifdef CONFIG_SMP
+
+static struct task_struct *pick_task_for_migrating(struct rq *rq, struct rq *dst_rq) {
+	struct list_head *head = &rq->custom.task_list;
+	struct task_struct *p;
+	struct sched_custom_entity *se;
+
+	se = list_last_entry(&rq->custom.task_list, struct sched_custom_entity, task_list);
+
+	list_for_each_entry(se, head, task_list) {
+		p = container_of(se, struct task_struct, custom_se);
+
+		if (p->policy == SCHED_CUSTOM && cpu_active(dst_rq->cpu) && !task_running(rq, p))
+			return p;
+	}
+
+	return NULL;
+}
+
+int balance_custom(struct rq *rq, struct task_struct *prev, struct rq_flags *rf) {
+	int task_cpu = rq->cpu; 
+	int cpu; 
+	int max = 0;
+	struct task_struct *p;
+	struct rq *src_rq, *busiest_rq;
+
+	rq_unpin_lock(rq, rf);
+	
+	if (rq->nr_running)
+		goto out;
+
+	for_each_online_cpu(cpu) {
+		if (task_cpu == cpu)
+			continue;
+
+		src_rq = cpu_rq(cpu);
+
+		if (rq->custom.nr_running > max) {
+			max = rq->custom.nr_running;
+			busiest_rq = src_rq;
+		}
+	}
+
+	if (max) {
+		double_lock_balance(rq, busiest_rq);
+
+		p = pick_task_for_migrating(busiest_rq, rq);
+
+		if (!p) {
+			double_unlock_balance(rq, busiest_rq);
+			goto out;
+		}
+
+		deactivate_task(busiest_rq, p, 0);
+		set_task_cpu(p, task_cpu);
+		activate_task(rq, p, 0);
+
+		double_unlock_balance(rq, busiest_rq);
+
+		resched_curr(rq);
+
+		rq_repin_lock(rq, rf);
+		return 1;
+	}
+
+out:
+	rq_repin_lock(rq, rf);
+	return 0;
+}
+
+int  select_task_rq_custom(struct task_struct *p, int task_cpu, int sd_flag, int flags) {
+	struct rq *rq;
+	int cpu, best_cpu = task_cpu;
+	int min = -1;
+
+	if (sd_flag != SD_BALANCE_WAKE && sd_flag != SD_BALANCE_FORK)
+		goto out;
+
+	rcu_read_lock();
+
+	for_each_online_cpu(cpu) {
+		rq = cpu_rq(cpu);
+
+		if (min == -1 || rq->nr_running < min) {
+			min = rq->nr_running;
+			best_cpu = cpu;
+		}
+	}
+
+	rcu_read_unlock();
+
+out:
+	return best_cpu;
+}
+
+#endif
+
 /*
  * Simple, special scheduling class for the per-CPU custom tasks:
  */
@@ -88,6 +185,13 @@ const struct sched_class custom_sched_class
 	.pick_next_task		= pick_next_task_custom,
 	.put_prev_task		= put_prev_task_custom,
 	.set_next_task      = set_next_task_custom,
+
+#ifdef CONFIG_SMP
+	.balance			= balance_custom,
+	.select_task_rq		= select_task_rq_custom,
+
+	.set_cpus_allowed	= set_cpus_allowed_common,
+#endif
 
 	.task_tick			= task_tick_custom,
 

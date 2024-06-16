@@ -177,7 +177,6 @@ static inline int dl_policy(int policy)
 	return policy == SCHED_DEADLINE;
 }
 
-/* EDITED CODE */
 static inline int custom_policy(int policy)
 {
 	return policy == SCHED_CUSTOM;
@@ -364,7 +363,6 @@ extern int  dl_bw_check_overflow(int cpu);
 
 struct cfs_rq;
 struct rt_rq;
-/* EDITED CODE */
 struct custom_rq;
 
 extern struct list_head task_groups;
@@ -724,7 +722,6 @@ struct dl_rq {
 	u64			bw_ratio;
 };
 
-/* EDITED CODE */
 /* Custom class' related fields in a runqueue */
 struct custom_rq {
 	struct list_head	task_list;
@@ -949,7 +946,6 @@ struct rq {
 	struct cfs_rq		cfs;
 	struct rt_rq		rt;
 	struct dl_rq		dl;
-	/* EDITED CODE */
 	struct custom_rq	custom;
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -1887,7 +1883,6 @@ extern const struct sched_class dl_sched_class;
 extern const struct sched_class rt_sched_class;
 extern const struct sched_class fair_sched_class;
 extern const struct sched_class idle_sched_class;
-/* EDITED CODE */
 extern const struct sched_class custom_sched_class;
 
 static inline bool sched_stop_runnable(struct rq *rq)
@@ -2305,7 +2300,6 @@ print_numa_stats(struct seq_file *m, int node, unsigned long tsf,
 extern void init_cfs_rq(struct cfs_rq *cfs_rq);
 extern void init_rt_rq(struct rt_rq *rt_rq);
 extern void init_dl_rq(struct dl_rq *dl_rq);
-/* EDITED CODE */
 extern void init_custom_rq(struct custom_rq *custom_rq);
 
 extern void cfs_bandwidth_usage_inc(void);
