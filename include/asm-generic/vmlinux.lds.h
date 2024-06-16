@@ -1167,4 +1167,3 @@
 	BSS(bss_align)							\
 	. = ALIGN(stop_align);						\
 	__bss_stop = .;
-
