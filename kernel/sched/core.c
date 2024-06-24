@@ -7066,7 +7066,6 @@ void __init sched_init(void)
 	unsigned long ptr = 0;
 	int i;
 
-	/* EDITED CODE */
 	/* Make sure the linker didn't screw up */
 	BUG_ON(&idle_sched_class + 1 != &fair_sched_class ||
 		   &fair_sched_class + 1 != &custom_sched_class ||
@@ -7144,15 +7143,10 @@ void __init sched_init(void)
 		rq->nr_running = 0;
 		rq->calc_load_active = 0;
 		rq->calc_load_update = jiffies + LOAD_FREQ;
-		//printk(KERN_CRIT "before rqs initializing");
 		init_cfs_rq(&rq->cfs);
 		init_rt_rq(&rq->rt);
-		//printk(KERN_CRIT "in1 rqs initializing");
-		/* EDITED CODE */
 		init_custom_rq(&rq->custom);
-		//printk(KERN_CRIT "in2 rqs initializing");
 		init_dl_rq(&rq->dl);
-		//printk(KERN_CRIT "after rqs initializing");
 #ifdef CONFIG_FAIR_GROUP_SCHED
 		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
