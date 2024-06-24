@@ -3262,8 +3262,8 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 	 * Revert to default priority/policy on fork if requested.
 	 */
 	if (unlikely(p->sched_reset_on_fork)) {
-		if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
-			p->policy = SCHED_NORMAL;
+		if (task_has_dl_policy(p) || task_has_rt_policy(p) || p->policy == SCHED_NORMAL) {
+			p->policy = SCHED_CUSTOM;
 			p->static_prio = NICE_TO_PRIO(0);
 			p->rt_priority = 0;
 		} else if (PRIO_TO_NICE(p->static_prio) < 0)
@@ -3283,6 +3283,8 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 		return -EAGAIN;
 	else if (rt_prio(p->prio))
 		p->sched_class = &rt_sched_class;
+        else if (p->policy == SCHED_CUSTOM)
+                p->sched_class = &custom_sched_class;
 	else
 		p->sched_class = &fair_sched_class;
 
@@ -4828,6 +4830,8 @@ static void __setscheduler_prio(struct task_struct *p, int prio)
 		p->sched_class = &dl_sched_class;
 	else if (rt_prio(prio))
 		p->sched_class = &rt_sched_class;
+	else if (p->policy == SCHED_CUSTOM)
+		p->sched_class = &custom_sched_class;
 	else
 		p->sched_class = &fair_sched_class;
 
@@ -7062,6 +7066,7 @@ void __init sched_init(void)
 	unsigned long ptr = 0;
 	int i;
 
+	/* EDITED CODE */
 	/* Make sure the linker didn't screw up */
 	BUG_ON(&idle_sched_class + 1 != &fair_sched_class ||
 		   &fair_sched_class + 1 != &custom_sched_class ||
@@ -7139,10 +7144,15 @@ void __init sched_init(void)
 		rq->nr_running = 0;
 		rq->calc_load_active = 0;
 		rq->calc_load_update = jiffies + LOAD_FREQ;
+		//printk(KERN_CRIT "before rqs initializing");
 		init_cfs_rq(&rq->cfs);
 		init_rt_rq(&rq->rt);
+		//printk(KERN_CRIT "in1 rqs initializing");
+		/* EDITED CODE */
 		init_custom_rq(&rq->custom);
+		//printk(KERN_CRIT "in2 rqs initializing");
 		init_dl_rq(&rq->dl);
+		//printk(KERN_CRIT "after rqs initializing");
 #ifdef CONFIG_FAIR_GROUP_SCHED
 		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;

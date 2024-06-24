@@ -42,6 +42,10 @@ static void yield_task_custom(struct rq *rq)
 	update_curr_custom(rq);
 }
 
+static void check_preempt_curr_custom(struct rq *rq, struct task_struct *p, int flags) {
+
+}
+
 static inline void set_next_task_custom(struct rq *rq, struct task_struct *p, bool first)
 {
 	p->se.exec_start = rq_clock_task(rq);
@@ -146,7 +150,7 @@ out:
 	return 0;
 }
 
-int  select_task_rq_custom(struct task_struct *p, int task_cpu, int sd_flag, int flags) {
+int select_task_rq_custom(struct task_struct *p, int task_cpu, int sd_flag, int flags) {
 	struct rq *rq;
 	int cpu, best_cpu = task_cpu;
 	int min = -1;
@@ -171,7 +175,31 @@ out:
 	return best_cpu;
 }
 
+void task_woken_custom(struct rq *this_rq, struct task_struct *task){
+
+}
+
+static void rq_online_custom(struct rq *rq) {
+
+}
+
+static void rq_offline_custom(struct rq *rq) {
+
+}
+
 #endif
+
+void switched_from_custom(struct rq *this_rq, struct task_struct *task) {
+
+}
+
+void switched_to_custom(struct rq *this_rq, struct task_struct *task) {
+
+}
+
+void prio_changed_custom(struct rq *this_rq, struct task_struct *task, int oldprio) {
+
+}
 
 /*
  * Simple, special scheduling class for the per-CPU custom tasks:
@@ -182,6 +210,8 @@ const struct sched_class custom_sched_class
 	.dequeue_task		= dequeue_task_custom,
 	.yield_task			= yield_task_custom,
 
+	.check_preempt_curr	= check_preempt_curr_custom,
+
 	.pick_next_task		= pick_next_task_custom,
 	.put_prev_task		= put_prev_task_custom,
 	.set_next_task      = set_next_task_custom,
@@ -190,10 +220,17 @@ const struct sched_class custom_sched_class
 	.balance			= balance_custom,
 	.select_task_rq		= select_task_rq_custom,
 
+	.task_woken			= task_woken_custom,
 	.set_cpus_allowed	= set_cpus_allowed_common,
+	.rq_online			= rq_online_custom,
+	.rq_offline			= rq_offline_custom,
 #endif
 
 	.task_tick			= task_tick_custom,
+
+	.switched_from		= switched_from_custom,
+	.switched_to		= switched_to_custom,
+	.prio_changed		= prio_changed_custom,
 
 	.update_curr		= update_curr_custom,
 };
